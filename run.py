@@ -1,20 +1,22 @@
 from pickletools import uint1
-#import wikipedia
+import wikipedia
 #from functions import *
 import random 
 import time
 import os
 from re import S
+from random_word import RandomWords
 
 
 
 #read file and create an array with words
-textFile = open("words.txt", "r")
-listOfWords2 = textFile.read().splitlines()
-textFile.close()
+#As I managed to use different option, the file will be unnecessary here - but it will be commented
+#textFile = open("words.txt", "r")
+#listOfWords2 = textFile.read().splitlines()
+#textFile.close()
 
-for i in range(len(listOfWords2)):
-    listOfWords2[i] = listOfWords2[i].lower()
+#for i in range(len(listOfWords2)):
+#    listOfWords2[i] = listOfWords2[i].lower()
 
 #GLOBAL VARIABLES
 MAXREACH = 6
@@ -25,13 +27,32 @@ run = True
 underscoreAr = []
 givenWord = []
 lettersProvided = []
-randomWord = random.choice(listOfWords2)
+r = RandomWords()
+randomWord = r.get_random_word()
 underscores = len(randomWord)
 
 #FUNCTIONS 
 
-#def hint(word):
-#    print(wikipedia.summary(word))
+def hint(word):
+    textHint = wikipedia.summary(word)
+    i = 0
+    while textHint[i] != '.':
+        tmp = ''
+        while textHint[i] != ' ':
+            tmp += textHint[i]
+            i += 1
+        if tmp == textHint:
+            print("------")
+        elif tmp == 'Traceback':
+            print("The hint is unfortunately not available")
+            return None
+        elif tmp.find('/Users') == -1:
+            print("I couldnt find the exact article for given word")
+            return None
+        else:
+            print(textHint[i], end='')
+    print("\n")
+
 
 #def to check, whether the user provided the same character again
 
@@ -56,10 +77,10 @@ def userInput():
 def check(random, state, arr, MAXREACH):
     status, toReach = 0, len(random)
     while state != MAXREACH:
-        #if state == 5:
-        #    decisionHint = input("Would you like to get an hint?")
-        #    if decisionHint in ["yes", "y"]:
-        #        hint(random)
+        if state == 5:
+            decisionHint = input("Would you like to get an hint? [Yes/No]")
+            if decisionHint in ["yes", "y"]:
+                hint(random)
         uInput = userInput()
         if isProvided(lettersProvided, uInput):
             print("You have already provided the ", uInput, "!")
@@ -84,7 +105,7 @@ def check(random, state, arr, MAXREACH):
         if checker != True:
             state += 1
             clear()
-            print(state, " mistake!")
+            print(" ---- No. of mistakes - ", state)
     if state == MAXREACH:
         return False
    
@@ -137,7 +158,7 @@ while run:
             run = True
             underscoreAr = []
             lettersProvided = []
-            randomWord = random.choice(listOfWords2)
+            randomWord = r.get_random_word()
             underscores = len(randomWord)
             randomToArray(randomWord)
             toUnderscore(underscoreAr)
@@ -155,7 +176,7 @@ while run:
             run = True
             underscoreAr = []
             lettersProvided = []
-            randomWord = random.choice(listOfWords2)
+            randomWord = r.get_random_word()
             underscores = len(randomWord)
             randomToArray(randomWord)
             toUnderscore(underscoreAr)
